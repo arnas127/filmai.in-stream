@@ -1,0 +1,32 @@
+{
+
+  "manifest_version": 2,
+  "name": "Movie Selector",
+  "version": "1.0",
+
+  "description": "Tool that allows to select video from filmai.in and send it to Android TV",
+
+  "icons": {
+    "48": "icons/logo.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.filmai.in/*"],
+      "js": [
+        "js/jquery-3.3.1.min.js",
+        "js/crypto-js-core.js",
+        "js/crypto-js-sha256.js",
+        "js/firebase.js",
+        "filmai-in-selector.js"
+      ]
+    }
+  ],
+
+  "permissions": [
+    "*://*.firebaseio.com/*",
+    "*://ipinfo.io/*",
+    "webRequest"
+  ]
+
+}
