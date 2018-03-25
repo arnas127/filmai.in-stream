@@ -5,12 +5,23 @@
     <script src="https://raw.githubusercontent.com/arnas127/filmai.in-stream/master/video-selector/js/crypto-js-core.js"></script>
     <script src="https://raw.githubusercontent.com/arnas127/filmai.in-stream/master/video-selector/js/crypto-js-sha256.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+    <style>
+      .center {
+          margin: auto;
+          width: 50%;
+          border: 3px solid green;
+          padding: 10px;
+      }
+    </style>
+
+
 	</head>
 	<body>
+    <div class="center">
       <h1 id="stream-title">Pavadinimas</h1>
       <a id="stream-url"  href="#">Play</a>
       <p id="stream-id"></p>
-
+    </div>
     <script>
       var userIP;
       var networkId;
