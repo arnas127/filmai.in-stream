@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <script src="./video-selector/js/jquery-3.3.1.min.js"></script>
+    <script src="./video-selector/js/crypto-js-core.js"></script>
+    <script src="./video-selector/js/crypto-js-sha256.js"></script>
+    <script src="./video-selector/js/firebase.js"></script>
+	</head>
+	<body>
+      <h1 id="stream-title">Pavadinimas</h1>
+      <a id="stream-url"  href="#">Play</a>
+      <p id="stream-id"></p>
+
+    <script>
+      var userIP;
+      var networkId;
+      var streamTitle = $('#stream-title');
+      var streamUrl = $('#stream-url');
+      var streamId = $('#stream-id');
+      var steamData;
+
+      var config = {
+        apiKey: "AIzaSyBREApkWhFAEbVoPx5mIK9jfk6xk3D3Vc0",
+        authDomain: "tv-links-7b89d.firebaseapp.com",
+        databaseURL: "https://tv-links-7b89d.firebaseio.com/",
+        storageBucket: "tv-links-7b89d.appspot.com"
+      };
+      firebase.initializeApp(config);
+      var database = firebase.database();
+
+      $.getJSON('http://ipinfo.io', function(data){
+        userIP = data.ip;
+      }).always(function() {
+        networkId = CryptoJS.SHA256(userIP).toString().substring(0, 12);
+        streamId.text(networkId);
+
+        var starCountRef = database.ref('streams/' + networkId);
+        starCountRef.on('value', function(snapshot) {
+          steamData = snapshot.val()
+          console.log(steamData);
+          if(steamData) {
+            if(steamData.title) {streamTitle.text(steamData.title)};
+            if(steamData.url) {streamUrl.attr('href', steamData.url)};
+          }
+        });
+      });
+    </script>
+	</body>
+</html>
