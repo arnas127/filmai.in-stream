@@ -1,36 +1,32 @@
-var config = {
-  apiKey: "AIzaSyBREApkWhFAEbVoPx5mIK9jfk6xk3D3Vc0",
-  authDomain: "tv-links-7b89d.firebaseapp.com",
-  databaseURL: "https://tv-links-7b89d.firebaseio.com/",
-  storageBucket: "tv-links-7b89d.appspot.com"
-};
-
-firebase.initializeApp(config);
-
 var url;
+var data;
 var title;
 var userIP;
-var database = firebase.database();
+var streamId;
+var databaseUrl;
+var loadButton;
 var playSelector = $('i.fa-play-circle-o');
 
 $.getJSON('http://ipinfo.io', function(data){
-  console.log(data)
   userIP = data.ip;
-  console.log(userIP)
 }).always(function() {
-  console.log('userIP ' + userIP);
-  var streamId = CryptoJS.SHA256(userIP).toString().substring(0, 12);
-  console.log('streamId ' + streamId);
+  streamId = CryptoJS.SHA256(userIP).toString().substring(0, 12);
+  databaseUrl = 'https://tv-links-7b89d.firebaseio.com/streams/' + streamId + '.json';
 });
 
-function writeStreamData(url, title) {
-  console.log('id:' + streamId + ' url:' + url + ' title:' + title);
+function writeStreamData(streamUrl, streamTitle) {
+  data = '{ "url": "' + streamUrl + '", "title": "' + streamTitle + '"}'
   
-  database.ref('streams/' + streamId).set({
-    url: url,
-    title: title
+  $.ajax({
+    url: databaseUrl,
+    type: 'PUT',
+    data: data,
+    contentType: 'json'
+  }).done(function() {
+    loadButton.text('loaded')
   });
-}
+};
+
 var waitForEl = function(selector, callback) {
   if (jQuery(selector).length) {
     callback();
@@ -42,13 +38,21 @@ var waitForEl = function(selector, callback) {
 };
 
 var pushStreamUrl = function() {
-  playSelector.click();
-  waitForEl('video source', function() {
-    $('video').trigger('pause');
-    url = $('video source').attr('src');
-    title = $('h1').text();
+  if (playSelector.is(":visible") ) {
+    playSelector.click();
+    playSelector.remove();
+  }
+  title = $('h1').text();
+  if (url) {
+    $('video').remove();
     writeStreamData(url, title);
-  });
+  } else {
+    waitForEl('video source', function() {
+      $('video').trigger('pause');
+      url = $('video source').attr('src');
+      writeStreamData(url, title);
+    });
+  }
 }
 
 var button = document.createElement("Button");
@@ -57,6 +61,11 @@ button.style = "top:5%;right:5%;position:fixed;z-index: 9999;font-size: 20px;col
 button.id = "stream-load";
 document.body.appendChild(button);
 
-$('#stream-load').click(function() {
+$('.html5flash label.checkbox-styled:has(input[data-type="html5"])').click()
+
+loadButton = $('#stream-load')
+
+loadButton.click(function() {
   pushStreamUrl();
+  loadButton.text(loaded)
 });

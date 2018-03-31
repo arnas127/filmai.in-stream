@@ -17,7 +17,6 @@
         "js/jquery-3.3.1.min.js",
         "js/crypto-js-core.js",
         "js/crypto-js-sha256.js",
-        "js/firebase.js",
         "filmai-in-selector.js"
       ]
     }
